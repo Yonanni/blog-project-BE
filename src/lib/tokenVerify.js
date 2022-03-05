@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
-import pkg from "@prisma/client";
+import prisma from "./index.js"
+// import pkg from "@prisma/client";
 
-const {PrismaClient} = pkg
-const prisma = new PrismaClient()
+// const {PrismaClient} = pkg
+// const prisma = new PrismaClient()
 
 //access token
 const newToken = (payload) =>

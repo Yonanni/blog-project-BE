@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors"
 import userRouter from "./routes/user.js";
+import articleRouter from "./routes/article.js";
 
 const port = 3003
 const server = express()
@@ -20,6 +21,7 @@ server.use(express.json())
 server.use(cors(corsOptions))
 
 server.use("/users", userRouter)
+server.use("/articles", articleRouter)
 
 
 server.listen(port, ()=> {
