@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id Int @default(autoincrement()) @id
+  firstName String
+  lastName String
+  email String @db.VarChar(255) @unique
+  password String
+  role Role @default(User)
+  comment Comment[]
+  avatar String?
+  refresh_token String?
+  google_id String?
+}
+model Author {
+  id Int @default(autoincrement()) @id
+  firstName String
+  lastName String
+  role Role @default(Author)
+  avatar String?
+}
+model Article {
+  id Int @default(autoincrement()) @id
+  content String 
+  first_paragraph String?
+  title String 
+  category String
+  cover String?
+  comments Comment[] 
+  free Boolean @default(false)
+  comment_id Int
+  created_At DateTime @default(now())
+  updated_At DateTime @default(now())
+}
+model Comment {
+  id Int @default(autoincrement()) @id 
+  comment String
+  written_by User @relation(fields: [userId], references: [id])
+  userId Int
+  written_on Article @relation(fields: [article_Id], references: [id])
+  article_Id Int
+
+}
+
+enum Role {
+  User
+  Admin
+  Author
+}
