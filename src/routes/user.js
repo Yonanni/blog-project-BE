@@ -2,9 +2,8 @@ import { Router } from "express";
 import { checkCredential } from "../lib/index.js";
 import prisma from "../lib/index.js";
 import bcrypt from "bcrypt"
-
 import { jwtAuthenticate } from "../lib/tokenVerify.js";
-import createHttpError from "http-errors";
+import createError from "http-errors";
 
 const userRouter = Router();
 
@@ -18,7 +17,7 @@ userRouter.get("/", async (req, res) => {
   res.send(users);
 });
 
-userRouter.post("/register", async (req, res) => {
+userRouter.post("/register", async (req, res, next) => {
   const { firstName, lastName, email, role, password} = req.body;
   const pass = await bcrypt.hash(password, 10)
   const isUser = await prisma.user.findUnique({
@@ -29,21 +28,23 @@ userRouter.post("/register", async (req, res) => {
 
   if (isUser) {
     return res.send("user exist");
+  } else {
+
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        firstName,
+        lastName,
+        role,
+        password: pass
+      },
+    });
+    
+    res.send(newUser);
   }
-  const newUser = await prisma.user.create({
-    data: {
-      email,
-      firstName,
-      lastName,
-      role,
-      password: pass
-    },
-  });
-  
-  res.send(newUser);
 });
 
-userRouter.post("/login", async (req, res) => {
+userRouter.post("/login", async (req, res, next) => {
   try {
     const { password, email } = req.body;
    
@@ -51,11 +52,11 @@ userRouter.post("/login", async (req, res) => {
     if (user) {
       const { accessToken, refreshT } = await jwtAuthenticate(user);
 
-      console.log({"acc&ref": "helo", accessToken, refreshT })
+      // console.log({"acc&ref": "helo", accessToken, refreshT })
 
       res.send({ accessToken, refreshT });
     } else {
-      createHttpError(401, "Invalid email/password");
+      next(createError(401, "Invalid email/password"));
     }
   } catch (error) {
     console.log(error);
