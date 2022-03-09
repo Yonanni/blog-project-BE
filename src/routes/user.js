@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { checkCredential } from "../lib/index.js";
+import { checkCredential, userAuthMiddleware } from "../lib/index.js";
 import prisma from "../lib/index.js";
 import bcrypt from "bcrypt"
 import { jwtAuthenticate } from "../lib/tokenVerify.js";
@@ -40,7 +40,7 @@ userRouter.post("/register", async (req, res, next) => {
       },
     });
     
-    res.send(newUser);
+    res.sendStatus(201).send(newUser);
   }
 });
 
@@ -63,4 +63,28 @@ userRouter.post("/login", async (req, res, next) => {
   }
 });
 
+userRouter.post("/author/toWrite", userAuthMiddleware, async (req, res, next) => {
+  try {
+    const { about, publication_category, publication_name } = req.body;
+    const author = await prisma.user.update({
+      where: {
+        id:req.user.id,
+      },
+      data: {
+        about,
+        publication_category, 
+        role: "Author",
+        publication_name, 
+        
+      }
+    })
+    if (!author){
+      res.sendStatus(404).send(`${req.user.id} NOT found`)
+    }else {
+      res.send(author)
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
 export default userRouter;
