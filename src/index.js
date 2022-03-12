@@ -7,7 +7,7 @@ import commentRouter from "./routes/comments.js";
 const port = process.env.PORT || 3003
 const server = express()
 
-const whitelist= ["http://localhost:3003", "https://yonbloging.app.vercel"]
+const whitelist= ["http://localhost:3003", "https://yonbloging.app.vercel", "http://localhost:3000"]
 var corsOptions = {
     origin: function (origin, callback) {
       if (whitelist.indexOf(origin) !== -1) {
