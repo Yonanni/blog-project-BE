@@ -7,12 +7,11 @@ import createError from "http-errors";
 
 const userRouter = Router();
 
-userRouter.get("/", async (req, res) => {
+userRouter.get("/allAuthors", async (req, res) => {
   const users = await prisma.user.findMany({
-    select: {
-      username: true,
-      Comment: true,
-    },
+    where: {
+      role: "Author"
+    }
   });
   res.send(users);
 });
@@ -87,4 +86,6 @@ userRouter.post("/author/toWrite", userAuthMiddleware, async (req, res, next) =>
     console.log(error);
   }
 });
+
+
 export default userRouter;

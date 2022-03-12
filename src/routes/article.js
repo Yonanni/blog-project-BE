@@ -4,30 +4,22 @@ import createError from "http-errors";
 
 const articleRouter = Router()
 
-articleRouter.post("/register", async (req, res) => {
-    const { firstName, lastName, email, role, password} = req.body;
-    const pass = await bcrypt.hash(password, 10)
-    const isUser = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-  
-    if (isUser) {
-      return res.send("user exist");
+articleRouter.get("/:articleId", async (req, res) => {
+    try {
+      const article = await prisma.article.findFirst({
+        where: {
+          id: req.params.articleId
+        }
+      })
+      if (article){
+        res.sendStatus(200).send(article)
+      } else {
+        res.sendStatus(404).send(`${req.params.articleId} NOT found!`)
+      }
+    } catch (error) {
+      console.log(error)
     }
-    const newUser = await prisma.user.create({
-      data: {
-        email,
-        firstName,
-        lastName,
-        role,
-        password: pass
-      },
-    });
-    
-    res.send(newUser);
-  });
+});
   
   articleRouter.post("/", userAuthMiddleware, async (req, res, next) => {
     try {
