@@ -13,14 +13,14 @@ var corsOptions = {
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true)
       } else {
-        callback(new Error('Not allowed by CORS'))
+        callback(new Error('Not allowed by CORS!!!'))
       }
     }
   }
 
 server.use(express.json())
-server.use(cors(corsOptions))
-// server.use(cors())
+// server.use(cors(corsOptions))
+server.use(cors())
 
 server.use("/users", userRouter)
 server.use("/articles", articleRouter)
