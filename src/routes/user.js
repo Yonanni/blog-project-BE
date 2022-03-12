@@ -17,7 +17,7 @@ userRouter.get("/allAuthors", async (req, res) => {
 });
 
 userRouter.post("/register", async (req, res, next) => {
-  const { firstName, lastName, email, role, password} = req.body;
+  const { firstName, lastName, email, role, password, bio} = req.body;
   const pass = await bcrypt.hash(password, 10)
   const isUser = await prisma.user.findUnique({
     where: {
@@ -35,11 +35,12 @@ userRouter.post("/register", async (req, res, next) => {
         firstName,
         lastName,
         role,
-        password: pass
+        password: pass,
+        bio
       },
     });
     
-    res.sendStatus(201).send(newUser);
+    res.sendStatus(201).send();
   }
 });
 
