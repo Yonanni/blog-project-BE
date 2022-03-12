@@ -4,7 +4,7 @@ import userRouter from "./routes/user.js";
 import articleRouter from "./routes/article.js";
 import commentRouter from "./routes/comments.js";
 
-const port = 3003
+const port = process.env.PORT || 3003
 const server = express()
 
 const whitelist= ["http://localhost:3003", "https://yonbloging.app.vercel"]
