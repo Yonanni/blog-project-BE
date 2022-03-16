@@ -7,6 +7,15 @@ import createError from "http-errors";
 
 const userRouter = Router();
 
+userRouter.get("/", userAuthMiddleware, async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: req.user.id
+    }
+  });
+  res.send(user);
+});
+
 userRouter.get("/allAuthors", async (req, res) => {
   const users = await prisma.user.findMany({
     where: {
